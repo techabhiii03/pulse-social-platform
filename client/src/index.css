@@ -1,0 +1,23 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  @apply bg-ink text-slate-100 font-body;
+}
+
+h1, h2, h3, .font-display {
+  font-family: 'Space Grotesk', sans-serif;
+}
+
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-thumb { background: #2e3146; border-radius: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+
+@keyframes pulse-dot {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(94,234,212,0.55); }
+  70% { box-shadow: 0 0 0 6px rgba(94,234,212,0); }
+}
+.pulse-live {
+  animation: pulse-dot 2s infinite;
+}
