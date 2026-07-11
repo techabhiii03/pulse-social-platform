@@ -1,113 +1,245 @@
-# Pulse — Social Media Dashboard
+# 🚀 Pulse
 
-A full-stack social media dashboard: profiles with media uploads, a real-time
-feed, likes/comments/follows, real-time direct messaging, and an engagement
-analytics dashboard. Notifications are delivered through a Redis pub/sub
-layer bridged onto Socket.IO, so they work even if you run multiple server
-instances behind a load balancer.
+<p align="center">
+  <img src="./assets/pulse-preview.png" alt="Pulse Preview" width="100%">
+</p>
 
-## Stack
+<p align="center">
 
-- **Backend:** Node.js, Express, MongoDB (Mongoose), Socket.IO, Redis (ioredis)
-- **Frontend:** React (Vite), Tailwind CSS, Recharts, Socket.IO client
-- **Auth:** JWT (bearer tokens), bcrypt password hashing
-- **Media uploads:** Multer (local disk storage, served statically)
+![React](https://img.shields.io/badge/React-19-61DAFB?style=for-the-badge&logo=react&logoColor=white)
+![Node.js](https://img.shields.io/badge/Node.js-22-339933?style=for-the-badge&logo=node.js&logoColor=white)
+![Express](https://img.shields.io/badge/Express.js-Backend-000000?style=for-the-badge&logo=express)
+![MongoDB](https://img.shields.io/badge/MongoDB-Database-47A248?style=for-the-badge&logo=mongodb&logoColor=white)
+![Socket.IO](https://img.shields.io/badge/Socket.IO-Real--Time-010101?style=for-the-badge&logo=socketdotio)
+![Redis](https://img.shields.io/badge/Redis-Pub/Sub-DC382D?style=for-the-badge&logo=redis&logoColor=white)
 
-## How the notification system works
+</p>
 
-1. An action happens (like, comment, follow) → the API layer calls
-   `sendNotification()` in `server/services/notificationService.js`.
-2. That function writes the notification to MongoDB **and** publishes a
-   JSON payload to a Redis channel (`notifications`).
-3. Every server process subscribes to that channel (`server/sockets/index.js`).
-   When a message arrives, it's forwarded over Socket.IO to the recipient's
-   personal room (`user:<id>`) if they're currently connected.
-4. The React client listens for `notification:new` on its socket and updates
-   the notification bell in real time, no polling required.
+<p align="center">
 
-This decouples "who created the notification" from "who delivers it to the
-browser" — useful once you scale to more than one Node process.
+A modern full-stack social networking platform built with the MERN stack, featuring real-time messaging, Redis-powered notifications, secure authentication, user engagement analytics, and a responsive user experience.
 
-## Project layout
+</p>
+
+---
+
+# 🌐 Live Demo
+
+> 🚧 Coming Soon
+
+---
+
+# ✨ Features
+
+- 🔐 JWT Authentication
+- 💬 Real-time Messaging (Socket.IO)
+- 🔔 Redis Pub/Sub Notifications
+- ❤️ Like & Comment System
+- 👥 Follow / Unfollow Users
+- 📝 Create, Edit & Delete Posts
+- 🖼️ Media Uploads
+- 📊 Engagement Analytics Dashboard
+- 👤 User Profiles
+- 📱 Fully Responsive Design
+
+---
+
+# 📸 Screenshots
+
+## 🏠 Home Feed
+
+![Home](./assets/home.png)
+
+---
+
+## 💬 Real-Time Messaging
+
+![Messages](./assets/chat.png)
+
+---
+
+## 📊 Analytics Dashboard
+
+![Analytics](./assets/analytics.png)
+
+
+---
+
+# 🛠 Tech Stack
+
+## Frontend
+
+- React (Vite)
+- Tailwind CSS
+- Axios
+- React Context API
+- Recharts
+- Socket.IO Client
+
+## Backend
+
+- Node.js
+- Express.js
+- MongoDB
+- Mongoose
+- Socket.IO
+- Redis (ioredis)
+
+## Authentication
+
+- JWT
+- bcrypt
+
+## Media Uploads
+
+- Multer
+
+---
+
+# 🏗 Architecture
 
 ```
-social-dashboard/
-├── docker-compose.yml       # MongoDB + Redis for local dev
-├── server/                  # Express API + Socket.IO
-│   ├── config/               # db.js, redis.js
-│   ├── models/                # User, Post, Comment, Message, Notification
-│   ├── middleware/            # auth, upload (multer), error handler
-│   ├── routes/                 # auth, users, posts, messages, notifications, analytics
-│   ├── services/                # notificationService.js (Redis pub/sub)
-│   ├── sockets/                  # Socket.IO setup, messaging, notification bridge
+Client (React)
+
+↓
+
+Express API
+
+↓
+
+MongoDB
+
+↓
+
+Redis Pub/Sub
+
+↓
+
+Socket.IO
+
+↓
+
+Real-time Client Updates
+```
+
+---
+
+# 🔔 Notification Flow
+
+1. User performs an action (Like, Comment, Follow)
+2. Express API stores notification
+3. Notification published to Redis
+4. Socket.IO server receives Redis event
+5. Event pushed instantly to recipient
+6. React updates notification bell without polling
+
+---
+
+# 📁 Project Structure
+
+```
+pulse-social-platform/
+
+├── client/
+│   ├── src/
+│   ├── components/
+│   ├── context/
+│   ├── pages/
+│   └── api/
+
+├── server/
+│   ├── config/
+│   ├── middleware/
+│   ├── models/
+│   ├── routes/
+│   ├── services/
+│   ├── sockets/
 │   └── server.js
-└── client/                  # React (Vite) frontend
-    └── src/
-        ├── api/axios.js
-        ├── context/            # AuthContext, SocketContext
-        ├── components/          # Navbar, PostCard, NotificationBell
-        └── pages/                # Login, Register, Feed, Profile, Messages, Analytics
+
+└── docker-compose.yml
 ```
 
-## Getting started
+---
 
-### 1. Start MongoDB and Redis
+# ⚙️ Getting Started
+
+## Clone Repository
 
 ```bash
-docker compose up -d
+git clone https://github.com/techabhiii03/pulse-social-platform.git
 ```
 
-(Or point `MONGO_URI` / `REDIS_URL` at existing instances.)
-
-### 2. Backend
+## Backend
 
 ```bash
 cd server
-cp .env.example .env   # edit JWT_SECRET at minimum
 npm install
-npm run dev             # nodemon, http://localhost:5000
+npm run dev
 ```
 
-### 3. Frontend
+## Frontend
 
 ```bash
 cd client
 npm install
-npm run dev             # http://localhost:5173 (proxies /api and /uploads to :5000)
+npm run dev
 ```
 
-Open http://localhost:5173, register two accounts (e.g. in two browser
-windows) to try out real-time messaging, likes, comments, and follow
-notifications.
+---
 
-## API overview
+# 📡 API Highlights
 
-| Method | Route                          | Description                          |
-|--------|---------------------------------|---------------------------------------|
-| POST   | `/api/auth/register`            | Create account                        |
-| POST   | `/api/auth/login`               | Log in, get JWT                       |
-| GET    | `/api/auth/me`                  | Current user                          |
-| GET    | `/api/users/:username`          | Public profile                        |
-| PATCH  | `/api/users/me`                 | Update bio/display name               |
-| POST   | `/api/users/me/avatar`          | Upload avatar (multipart)             |
-| POST   | `/api/users/:id/follow`         | Follow a user                         |
-| DELETE | `/api/users/:id/follow`         | Unfollow a user                       |
-| GET    | `/api/posts/feed`                | Feed of people you follow             |
-| POST   | `/api/posts`                     | Create post (multipart, optional media)|
-| POST   | `/api/posts/:id/like`            | Toggle like                           |
-| POST   | `/api/posts/:id/comments`        | Add comment                           |
-| GET    | `/api/notifications`             | Recent notifications                  |
-| GET    | `/api/messages/conversations`    | Conversation list                     |
-| GET    | `/api/messages/:userId`          | Message history with a user           |
-| GET    | `/api/analytics/summary`         | Engagement dashboard data (Redis-cached)|
+| Method | Endpoint | Description |
+|---------|----------|-------------|
+| POST | `/api/auth/login` | Login |
+| POST | `/api/auth/register` | Register |
+| GET | `/api/posts/feed` | User Feed |
+| POST | `/api/posts` | Create Post |
+| POST | `/api/posts/:id/comments` | Add Comment |
+| GET | `/api/messages/:userId` | Chat |
+| GET | `/api/notifications` | Notifications |
+| GET | `/api/analytics/summary` | Dashboard |
 
-Real-time events over Socket.IO (auth via `socket.handshake.auth.token`):
-`message:send`, `message:new`, `message:typing`, `message:read`,
-`notification:new`, `presence:update`.
+---
 
-## Notes / next steps for production
+# 🚀 Future Improvements
 
-- Swap local disk storage (Multer) for S3/Cloudinary for uploaded media.
-- Add refresh tokens / token rotation if you need shorter-lived access tokens.
-- Add pagination cursors instead of page numbers for very large feeds.
-- Put the analytics summary behind a background job if computed over large datasets.
+- Cloudinary Image Storage
+- Infinite Feed Scrolling
+- Video Uploads
+- Story Feature
+- Push Notifications
+- OAuth Login
+- Docker Deployment
+- CI/CD Pipeline
+
+---
+
+# 💡 What I Learned
+
+Building Pulse helped me gain practical experience in:
+
+- Designing REST APIs
+- Authentication using JWT
+- Redis Pub/Sub Architecture
+- Real-time communication with Socket.IO
+- MongoDB Schema Design
+- Responsive Frontend Development
+- State Management
+- Backend Project Structure
+
+---
+
+# 👨‍💻 Author
+
+**Abhishek Sharma**
+
+Full Stack Developer
+
+📧 Mail: abhiiishek.work@gmail.com
+
+💼 LinkedIn: https://www.linkedin.com/in/abhiishek-sharma-96ba38378/
+
+🌐 Portfolio (Coming Soon)
+
+⭐ If you like this project, consider giving it a star!
